@@ -218,7 +218,7 @@ const resetForm = () => {
       </div>
 
       <div v-if="isSubmitting" class="text-center mb-10">
-        <Icon name="svg-spinners:3-dots-scale" size="48" />
+        <UIcon name="i-lucide-loader-circle" class="size-12 animate-spin" />
         <p>{{ $t('Antrag wird gesendet') }}</p>
       </div>
     </form>
