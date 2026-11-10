@@ -159,7 +159,7 @@ main() {
   git checkout --quiet --detach "$target"
   # The commit goes into .env only when the update has worked.
   export COMMIT_HASH="$(short "$target")"
-  docker compose up -d --build --wait
+  docker compose up -d --build --wait --remove-orphans
   set_env COMMIT_HASH "$COMMIT_HASH"
   docker image prune --force > /dev/null
 
