@@ -3,7 +3,8 @@ import logo from '~/assets/logo.png'
 
 const currentYear = new Date().getFullYear()
 
-const { locale, locales, setLocale } = useI18n()
+
+const { locale, locales, localeProperties, setLocale } = useI18n()
 
 const colorMode = useColorMode()
 
@@ -23,7 +24,9 @@ useHead({
 
 const localeItems = computed(() =>
   locales.value.map(loc => ({
-    label: loc.code.toUpperCase(),
+    label: loc.name,
+    type: 'checkbox',
+    checked: loc.code === locale.value,
     onSelect: () => setLocale(loc.code)
   }))
 )
@@ -54,7 +57,14 @@ const { data: applicationProcess } = await useDoc('application-process')
     </div>
 
     <UDropdownMenu :items="localeItems">
-      <UButton icon="i-lucide-languages" variant="ghost" color="neutral" />
+      <UButton
+        icon="i-lucide-languages"
+        trailing-icon="i-lucide-chevron-down"
+        variant="soft"
+        color="neutral"
+        :label="localeProperties.name"
+        :aria-label="$t('Sprache')"
+      />
     </UDropdownMenu>
   </div>
 

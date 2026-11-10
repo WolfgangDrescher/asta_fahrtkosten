@@ -38,23 +38,28 @@ export default defineNuxtConfig({
     locales: [
       {
         code: 'de',
-        file: 'de.yaml'
+        file: 'de.yaml',
+        name: 'Deutsch'
       },
       {
         code: 'en',
-        file: 'en.yaml'
+        file: 'en.yaml',
+        name: 'English'
       },
       {
         code: 'fr',
-        file: 'fr.yaml'
+        file: 'fr.yaml',
+        name: 'Français'
       },
       {
         code: 'it',
-        file: 'it.yaml'
+        file: 'it.yaml',
+        name: 'Italiano'
       },
       {
         code: 'es',
-        file: 'es.yaml'
+        file: 'es.yaml',
+        name: 'Español'
       }
     ],
     detectBrowserLanguage: false
