@@ -11,6 +11,7 @@ colorMode.preference = 'light'
 colorMode.value = 'light'
 
 useHead({
+  htmlAttrs: { lang: locale },
   title: 'Fahrtkostenzuschuss AStA HfM Freiburg',
   link: [
     {
