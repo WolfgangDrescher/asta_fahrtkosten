@@ -1,0 +1,18 @@
+# The app listens on 127.0.0.1:3000 only, for the reverse proxy of the host
+# (see docker/nginx.example.conf). Server-specific settings belong in .env,
+# which git ignores: the mail account, the ALTCHA secret and the commit that
+# docker/update.sh deployed. Local changes to this file go in
+# compose.override.yaml.
+
+services:
+  app:
+    image: asta-fahrtkosten:${COMMIT_HASH:-latest}
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - '127.0.0.1:3000:3000'
+    read_only: true
+    tmpfs: [/tmp, /app/.data]
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']

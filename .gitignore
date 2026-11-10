@@ -22,3 +22,6 @@ logs
 .env
 .env.*
 !.env.example
+
+# Server-specific: the version docker/update.sh deployed, and local compose settings
+/compose.override.yaml
