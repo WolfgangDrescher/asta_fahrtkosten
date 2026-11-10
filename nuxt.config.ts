@@ -21,15 +21,18 @@ export default defineNuxtConfig({
     }
   },
 
+  // Set at runtime with NUXT_* environment variables, see .env.example
   runtimeConfig: {
-    // Set at runtime with NUXT_ALTCHA_HMAC_KEY, see .env.example
     altchaHmacKey: '',
-
-    MAILHOST: process.env.MAILHOST,
-    MAILPORT: process.env.MAILPORT,
-    MAILUSER: process.env.MAILUSER,
-    MAILPASSWORD: process.env.MAILPASSWORD,
-    CONTACTMAIL: process.env.CONTACTMAIL
+    mail: {
+      host: '',
+      port: 465,
+      secure: true,
+      user: '',
+      password: '',
+      from: '',
+      to: ''
+    }
   },
 
   i18n: {

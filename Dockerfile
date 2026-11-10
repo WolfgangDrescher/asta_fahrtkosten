@@ -7,8 +7,9 @@ ARG NODE=24
 
 # The build. The dependencies are installed before the sources are copied, so
 # a change in the sources does not install them again. The install scripts are
-# skipped because `nuxt prepare` (postinstall) needs the sources, and
-# `nuxt build` runs it anyway.
+# skipped: the only one is our own postinstall `nuxt prepare`, which needs the
+# sources and runs as part of `nuxt build` anyway. None of the dependencies
+# needs an install script.
 FROM node:${NODE}-bookworm-slim AS build
 WORKDIR /build
 COPY package.json package-lock.json ./

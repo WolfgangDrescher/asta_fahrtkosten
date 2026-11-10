@@ -53,7 +53,7 @@ random_secret() {
 }
 
 # Makes sure .env exists and has everything the app needs. The ALTCHA secret
-# is generated, the mail account has to come from the server admin.
+# is generated, the mail server has to come from the server admin.
 check_env() {
   if [ ! -f .env ]; then
     cp .env.example .env
@@ -64,7 +64,7 @@ check_env() {
     echo "Generated NUXT_ALTCHA_HMAC_KEY in .env"
   fi
   missing=
-  for name in EMAIL_USERNAME EMAIL_PASSWORD EMAIL_TO; do
+  for name in NUXT_MAIL_HOST NUXT_MAIL_USER NUXT_MAIL_PASSWORD NUXT_MAIL_TO; do
     [ -n "$(env_value "$name")" ] || missing="$missing $name"
   done
   if [ -n "$missing" ]; then

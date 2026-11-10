@@ -142,18 +142,22 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const { mail } = useRuntimeConfig(event)
+
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: mail.host,
+    port: mail.port,
+    secure: mail.secure,
     auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD
+      user: mail.user,
+      pass: mail.password
     }
   })
 
   try {
     await transporter.sendMail({
-      from: process.env.EMAIL_USERNAME,
-      to: process.env.EMAIL_TO,
+      from: mail.from || mail.user,
+      to: mail.to,
       subject: 'Neuer Antrag auf Fahrtkostenzuschuss',
       text: [
         'Ein neuer Antrag auf Fahrtkostenzuschuss wurde eingereicht.',
