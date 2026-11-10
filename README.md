@@ -1,93 +1,39 @@
-# Nuxt Minimal Starter
+# Fahrtkostenzuschuss AStA HfM Freiburg
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Website of the AStA of the Hochschule für Musik Freiburg for applying for a
+travel grant. Students upload the filled-in application form with their
+receipts, the app checks the files and mails them to the AStA. Built with
+[Nuxt](https://nuxt.com), [Nuxt UI](https://ui.nuxt.com),
+[Nuxt Content](https://content.nuxt.com) and [ALTCHA](https://altcha.org).
 
 ## Setup
 
-Make sure to install dependencies:
-
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+cp .env.example .env
 ```
 
-## Development Server
+`.env.example` lists the settings: the SMTP server that sends the applications,
+the address they go to (an `@mh-freiburg.de` address) and the ALTCHA secret.
 
-Start the development server on `http://localhost:3000`:
+## Development
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## Content
 
-Build the application for production:
+- Texts of the sections: `content/<language>/*.md`
+- Translations of the interface: `i18n/locales/<language>.yaml`
+- Application form as PDF: `public/fahrtkostenantrag.pdf`
 
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## Docker
+## Server
 
 `Dockerfile` and `compose.yaml` run the app as one container, published on
-`127.0.0.1:3000` for the reverse proxy of the host. `docker/nginx.example.conf`
-is a starting point for that proxy.
-
-```bash
-docker compose up -d --build
-```
-
-### Server
-
-Clone the repository on the server and run the update script. It builds the
-image there, from the commit it deploys; nothing is pulled from a registry.
+`127.0.0.1:3000` for the reverse proxy of the host; `docker/nginx.example.conf`
+is a starting point for that proxy. Clone the repository on the server and run
+the update script, which builds the image there from the commit it deploys:
 
 ```bash
 git clone https://github.com/WolfgangDrescher/asta_fahrtkosten.git
@@ -96,7 +42,7 @@ docker/update.sh
 ```
 
 On the first run the script creates `.env` from `.env.example` and generates
-the ALTCHA secret. Fill in the mail account (`EMAIL_USERNAME`, `EMAIL_PASSWORD`,
-`EMAIL_TO`) and run it again. Later runs update to the newest commit of
-`master`; `docker/update.sh <commit>` deploys (or rolls back to) a specific
-commit. The deployed commit is kept in `.env` as `COMMIT_HASH`.
+the ALTCHA secret. Fill in the mail settings and run it again. Later runs
+update to the newest commit of `master`; `docker/update.sh <commit>` deploys
+(or rolls back to) a specific commit. The deployed commit is kept in `.env` as
+`COMMIT_HASH`.
