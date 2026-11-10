@@ -79,10 +79,10 @@ export default defineEventHandler(async (event) => {
 
   const email = form.find(field => field.name === 'email')?.data.toString().trim() ?? ''
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!isUniversityEmail(email)) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'A valid email address is required.'
+      statusMessage: `An @${UNIVERSITY_MAIL_DOMAIN} address is required.`
     })
   }
 
@@ -143,6 +143,15 @@ export default defineEventHandler(async (event) => {
   }
 
   const { mail } = useRuntimeConfig(event)
+
+  if (!isUniversityEmail(mail.to)) {
+    console.error(`NUXT_MAIL_TO must be an @${UNIVERSITY_MAIL_DOMAIN} address.`)
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'The recipient of the applications is not configured.'
+    })
+  }
 
   const transporter = nodemailer.createTransport({
     host: mail.host,

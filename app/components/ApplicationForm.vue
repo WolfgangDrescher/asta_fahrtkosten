@@ -35,6 +35,11 @@ const submitForm = async () => {
     return
   }
 
+  if (!isUniversityEmail(email.value)) {
+    serverMessage.value = t('Bitte gib deine MH-Mail-Adresse an ({domain}).', { domain: `@${UNIVERSITY_MAIL_DOMAIN}` })
+    return
+  }
+
   const allFiles = [applicationFile.value, ...invoiceFiles.value, ...confirmationFiles.value]
 
   if (!allFiles.every(file => isAllowedFile(file.name))) {
