@@ -10,6 +10,12 @@ export default defineNuxtConfig({
 
   css: ['~/assets/main.css'],
 
+  content: {
+    experimental: {
+      sqliteConnector: 'native'
+    }
+  },
+
   runtimeConfig: {
 
     turnstileSecret: process.env.TURNSTILE_SECRET,
