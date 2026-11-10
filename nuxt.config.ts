@@ -4,11 +4,16 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
     '@nuxt/ui',
-    '@nuxtjs/i18n',
-    '@nuxtjs/turnstile'
+    '@nuxtjs/i18n'
   ],
 
   css: ['~/assets/main.css'],
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: tag => tag === 'altcha-widget'
+    }
+  },
 
   content: {
     experimental: {
@@ -17,12 +22,8 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-
-    turnstileSecret: process.env.TURNSTILE_SECRET,
-
-    public: {
-      turnstileSiteKey: process.env.TURNSTILE_SITE_KEY
-    },
+    // Set at runtime with NUXT_ALTCHA_HMAC_KEY, see .env.example
+    altchaHmacKey: '',
 
     MAILHOST: process.env.MAILHOST,
     MAILPORT: process.env.MAILPORT,

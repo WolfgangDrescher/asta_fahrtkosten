@@ -10,6 +10,15 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const altchaPayload = form.find(field => field.name === 'altcha')?.data.toString() ?? ''
+
+  if (!await verifyAltcha(altchaPayload, event)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'CAPTCHA verification failed.'
+    })
+  }
+
   const firstName = form.find(field => field.name === 'firstName')?.data.toString().trim() ?? ''
 
   const lastName = form.find(field => field.name === 'lastName')?.data.toString().trim() ?? ''

@@ -1,19 +1,13 @@
 <script setup>
 import { ref } from 'vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-useHead({
-  script: [
-    {
-      src: 'https://challenges.cloudflare.com/turnstile/v0/api.js',
-      async: true,
-      defer: true
-    }
-  ]
-})
+const altchaChallengeUrl = `${useRuntimeConfig().app.baseURL}api/altcha`
+const altchaLanguages = { de: 'de', en: 'en', fr: 'fr-fr', es: 'es-es', it: 'it' }
 
-const config = useRuntimeConfig()
+const altcha = ref(null)
+const altchaPayload = ref('')
 
 const antrag = ref(null)
 const rechnung = ref([])
@@ -57,15 +51,13 @@ const submitForm = async () => {
 
     formData.append('lastName', lastName.value)
 
-    const token = document.querySelector('input[name="cf-turnstile-response"]')?.value || ''
-
-    if (!token) {
+    if (!altchaPayload.value) {
       serverMessage.value = t('Bitte bestätige zuerst das CAPTCHA.')
       isSubmitting.value = false
       return
     }
 
-    formData.append('turnstileToken', token)
+    formData.append('altcha', altchaPayload.value)
 
     const data = await $fetch('/api/mail', {
       method: 'POST',
@@ -79,6 +71,9 @@ const submitForm = async () => {
 
     wasSent.value = false
     serverMessage.value = t('Beim Senden ist ein Fehler aufgetreten.')
+
+    // A solved challenge is only accepted once
+    altcha.value?.reset()
   } finally {
     isSubmitting.value = false
   }
@@ -96,9 +91,7 @@ const resetForm = () => {
   wasSent.value = false
   serverMessage.value = ''
 
-  if (window.turnstile) {
-    window.turnstile.reset()
-  }
+  altcha.value?.reset()
 }
 </script>
 
@@ -181,7 +174,12 @@ const resetForm = () => {
             :placeholder="$t('weitere Infos für den AStA')"
           />
         </div>
-        <div class="cf-turnstile" :data-sitekey="config.public.turnstileSiteKey" />
+        <altcha-widget
+          ref="altcha"
+          :challenge="altchaChallengeUrl"
+          :language="altchaLanguages[locale]"
+          @statechange="altchaPayload = $event.detail.payload ?? ''"
+        />
 
         <div class="md:col-span-5 flex md:flex-row justify-center gap-4 mt-4">
           <UButton
