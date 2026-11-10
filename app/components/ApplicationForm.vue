@@ -59,13 +59,12 @@ const submitForm = async () => {
 
     formData.append('altcha', altchaPayload.value)
 
-    const data = await $fetch('/api/mail', {
+    await $fetch('/api/mail', {
       method: 'POST',
       body: formData
     })
 
-    wasSent.value = data.sent
-    serverMessage.value = data.message
+    wasSent.value = true
   } catch (error) {
     console.error(error)
 
@@ -101,9 +100,6 @@ const resetForm = () => {
       <h3 class="text-2xl p-8 font-bold mb-4 text-red-600">
         {{ $t('Antrag erfolgreich gesendet!') }}
       </h3>
-      <p class="mb-6">
-        {{ statusMessage }}
-      </p>
     </div>
 
     <form

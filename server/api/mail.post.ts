@@ -119,16 +119,16 @@ export default defineEventHandler(async (event) => {
       MH-Mail: ${MHmail}`,
       attachments
     })
-
-    return {
-      sent: true
-    }
   } catch (error) {
     console.error(error)
 
-    return {
-      sent: false,
-      message: 'An error occurred while sending the email.'
-    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'An error occurred while sending the email.'
+    })
+  }
+
+  return {
+    sent: true
   }
 })
