@@ -1,4 +1,8 @@
+import { extname } from 'node:path'
 import nodemailer from 'nodemailer'
+
+// Gmail allows 25 MB per mail, base64 encoding adds about 33 %
+const MAX_TOTAL_SIZE_BYTES = 18 * 1024 * 1024
 
 export default defineEventHandler(async (event) => {
   const form = await readMultipartFormData(event)
@@ -81,21 +85,20 @@ export default defineEventHandler(async (event) => {
       }
 
       return {
-        filename: `${typ}_${lastName}_${firstName}.pdf`,
+        filename: `${typ}_${lastName}_${firstName}${extname(file.filename ?? '')}`,
         content: file.data,
         contentType: file.type
       }
     })
 
-  const MAX_SIZE = 100 * 1024 * 1024 // 10 MB
+  const totalSize = [antrag, ...rechnungen, ...bestaetigungen]
+    .reduce((sum, file) => sum + file.data.length, 0)
 
-  for (const file of [antrag, ...rechnungen, ...bestaetigungen]) {
-    if (file.data.length > MAX_SIZE) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'File too large.'
-      })
-    }
+  if (totalSize > MAX_TOTAL_SIZE_BYTES) {
+    throw createError({
+      statusCode: 413,
+      statusMessage: 'Files too large.'
+    })
   }
 
   const transporter = nodemailer.createTransport({
@@ -111,12 +114,14 @@ export default defineEventHandler(async (event) => {
       from: process.env.EMAIL_USERNAME,
       to: process.env.EMAIL_TO,
       subject: 'Neuer Antrag auf Fahrtkostenzuschuss',
-
-      text: `Ein neuer Antrag auf Fahrtkostenzuschuss wurde eingereicht. 
-      
-      Kommentar: ${kommentar}
-
-      MH-Mail: ${MHmail}`,
+      text: [
+        'Ein neuer Antrag auf Fahrtkostenzuschuss wurde eingereicht.',
+        '',
+        `Name: ${firstName} ${lastName}`,
+        `MH-Mail: ${MHmail}`,
+        '',
+        `Kommentar: ${kommentar}`
+      ].join('\n'),
       attachments
     })
   } catch (error) {
