@@ -138,54 +138,9 @@ const resetForm = () => {
           />
         </div>
 
-        <div class="w-full">
-          <UFileUpload
-            v-model="applicationFile"
-            :dropzone="true"
-            :accept="ALLOWED_EXTENSIONS.join(',')"
-            :label="$t('ausgefüllter Antrag')"
-            class="w-full"
-          />
-          <p v-if="applicationFile" class="mt-2 text-sm text-gray-500">
-            📄 {{ applicationFile.name }}
-          </p>
-        </div>
-
-        <div class="w-full">
-          <UFileUpload
-            v-model="invoiceFiles"
-            multiple
-            :dropzone="true"
-            :accept="ALLOWED_EXTENSIONS.join(',')"
-            :label="$t('ausgefüllte Rechnung(en)')"
-            class="w-full"
-          />
-          <div
-            v-if="invoiceFiles.length"
-            class="mt-2 space-y-1 text-sm text-gray-500"
-          >
-            <p v-for="file in invoiceFiles" :key="`${file.name}-${file.size}`">
-              📄 {{ file.name }}
-            </p>
-          </div>
-        </div>
-
-        <div class="w-full">
-          <UFileUpload
-            v-model="confirmationFiles"
-            multiple
-            :dropzone="true"
-            :accept="ALLOWED_EXTENSIONS.join(',')"
-            :label="$t('Teilnahmebestätigung(en)')"
-            class="w-full"
-          />
-
-          <div v-if="confirmationFiles.length" class="mt-2 space-y-1 text-sm text-gray-500">
-            <p v-for="file in confirmationFiles" :key="`${file.name}-${file.size}`">
-              📄 {{ file.name }}
-            </p>
-          </div>
-        </div>
+        <DocumentField v-model="applicationFile" :label="$t('ausgefüllter Antrag')" />
+        <DocumentField v-model="invoiceFiles" multiple :label="$t('ausgefüllte Rechnung(en)')" />
+        <DocumentField v-model="confirmationFiles" multiple :label="$t('Teilnahmebestätigung(en)')" />
 
         <div class="w-full">
           <UTextarea
