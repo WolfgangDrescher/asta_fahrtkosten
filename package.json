@@ -11,20 +11,13 @@
   },
   "dependencies": {
     "@nuxt/content": "^3.16.0",
-    "@nuxt/scripts": "^1.3.9",
     "@nuxt/ui": "^4.11.1",
     "@nuxtjs/i18n": "^10.6.0",
-    "@nuxtjs/leaflet": "^1.3.3",
-    "@nuxtjs/recaptcha": "^1.1.2",
     "@nuxtjs/turnstile": "^1.1.3",
     "better-sqlite3": "^12.11.1",
+    "nodemailer": "^7.0.13",
     "nuxt": "^4.5.0",
-    "validator": "^13.15.35",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
-  },
-  "devDependencies": {
-    "nodemailer": "^7.0.13",
-    "nuxt-nodemailer": "^1.1.4"
   }
 }

@@ -5,8 +5,6 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/ui',
     '@nuxtjs/i18n',
-    'nuxt-nodemailer',
-    '@nuxt/scripts',
     '@nuxtjs/turnstile'
   ],
 
