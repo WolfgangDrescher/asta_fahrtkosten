@@ -10,16 +10,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const firstName = form.find(field => field.name === 'firstName')?.data.toString().trim() ?? ''
 
-  const config = useRuntimeConfig()
-
-  config.turnstileSecret
-
-  const firstName =
-    form.find(field => field.name === 'firstName')?.data.toString().trim() ?? ''
-
-  const lastName =
-    form.find(field => field.name === 'lastName')?.data.toString().trim() ?? ''
+  const lastName = form.find(field => field.name === 'lastName')?.data.toString().trim() ?? ''
 
   if (!firstName || !lastName) {
     throw createError({
@@ -27,8 +20,8 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Name First and Last are required.'
     })
   }
-  
-    const antrag = form.find(
+
+  const antrag = form.find(
     field => field.name === 'antrag' && field.filename
   )
 
@@ -47,11 +40,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const MHmail = 
-    form.find(field => field.name === 'MHmail')?.data.toString() ?? ''
- 
-  const kommentar =
-    form.find(field => field.name === 'kommentar')?.data.toString() ?? ''
+  const MHmail = form.find(field => field.name === 'MHmail')?.data.toString() ?? ''
+
+  const kommentar = form.find(field => field.name === 'kommentar')?.data.toString() ?? ''
 
   const totalRechnungen = rechnungen.length
   const totalBestaetigungen = bestaetigungen.length
@@ -60,32 +51,32 @@ export default defineEventHandler(async (event) => {
   let bestaetigungIndex = 0
 
   const attachments = form
-  .filter(field => field.filename)
-  .map(file => {
-    let typ
+    .filter(field => field.filename)
+    .map(file => {
+      let typ
 
-    if (file.name === 'antrag') {
-      typ = 'Antrag'
-    } else if (file.name === 'rechnung') {
-      rechnungIndex++
-      typ = totalRechnungen > 1
-        ? `Rechnung (${rechnungIndex}/${totalRechnungen})`
-        : 'Rechnung'
-    } else if (file.name === 'bestaetigung') {
-      bestaetigungIndex++
-      typ = totalBestaetigungen > 1
-        ? `Teilnahmebestaetigung (${bestaetigungIndex}/${totalBestaetigungen})`
-        : 'Teilnahmebestaetigung'
-    } else {
-      typ = file.name
-    }
+      if (file.name === 'antrag') {
+        typ = 'Antrag'
+      } else if (file.name === 'rechnung') {
+        rechnungIndex++
+        typ = totalRechnungen > 1
+          ? `Rechnung (${rechnungIndex}/${totalRechnungen})`
+          : 'Rechnung'
+      } else if (file.name === 'bestaetigung') {
+        bestaetigungIndex++
+        typ = totalBestaetigungen > 1
+          ? `Teilnahmebestaetigung (${bestaetigungIndex}/${totalBestaetigungen})`
+          : 'Teilnahmebestaetigung'
+      } else {
+        typ = file.name
+      }
 
-    return {
-      filename: `${typ}_${lastName}_${firstName}.pdf`,
-      content: file.data,
-      contentType: file.type
-    }
-  })
+      return {
+        filename: `${typ}_${lastName}_${firstName}.pdf`,
+        content: file.data,
+        contentType: file.type
+      }
+    })
 
   const MAX_SIZE = 100 * 1024 * 1024 // 10 MB
 
@@ -123,7 +114,6 @@ export default defineEventHandler(async (event) => {
     return {
       sent: true
     }
-
   } catch (error) {
     console.error(error)
 

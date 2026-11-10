@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+
 const { t } = useI18n()
 
 useHead({
@@ -33,7 +34,7 @@ const submitForm = async () => {
   isSubmitting.value = true
   serverMessage.value = ''
 
-  try {    
+  try {
     const formData = new FormData()
 
     if (antrag.value) {
@@ -56,8 +57,7 @@ const submitForm = async () => {
 
     formData.append('lastName', lastName.value)
 
-    const token =
-      document.querySelector('input[name="cf-turnstile-response"]')?.value || ''
+    const token = document.querySelector('input[name="cf-turnstile-response"]')?.value || ''
 
     if (!token) {
       serverMessage.value = t('Bitte bestätige zuerst das CAPTCHA.')
@@ -74,7 +74,6 @@ const submitForm = async () => {
 
     wasSent.value = data.sent
     serverMessage.value = data.message
-
   } catch (error) {
     console.error(error)
 
@@ -90,7 +89,7 @@ const resetForm = () => {
   rechnung.value = []
   bestaetigung.value = []
   kommentar.value = ''
-  MHmail.value =''
+  MHmail.value = ''
   firstName.value = ''
   lastName.value = ''
 
@@ -114,48 +113,90 @@ const resetForm = () => {
       </p>
     </div>
 
-    <form v-else action="/" method="post" class="mb-6" @submit.prevent="submitForm">
+    <form
+      v-else
+      action="/"
+      method="post"
+      class="mb-6"
+      @submit.prevent="submitForm"
+    >
       <div class="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 w-full">
         <div class="flex flex-col gap-3 w-full">
-          <UInput v-model="firstName" class="w-full" :placeholder="$t('Vorname')"/>
-          <UInput v-model="lastName" class="w-full" :placeholder="$t('Nachname')"/>
-          <UInput v-model="MHmail" class="w-full" :placeholder="$t('MH-Mail-Adresse')"/>
+          <UInput v-model="firstName" class="w-full" :placeholder="$t('Vorname')" />
+          <UInput v-model="lastName" class="w-full" :placeholder="$t('Nachname')" />
+          <UInput v-model="MHmail" class="w-full" :placeholder="$t('MH-Mail-Adresse')" />
         </div>
 
         <div class="w-full">
-          <UFileUpload v-model="antrag" :dropzone="true" :label="$t('ausgefüllter Antrag')" class="w-full"/>
-          <p v-if="antrag" class="mt-2 text-sm text-gray-500">📄 {{ antrag.name }}</p>
+          <UFileUpload
+            v-model="antrag"
+            :dropzone="true"
+            :label="$t('ausgefüllter Antrag')"
+            class="w-full"
+          />
+          <p v-if="antrag" class="mt-2 text-sm text-gray-500">
+            📄 {{ antrag.name }}
+          </p>
         </div>
 
         <div class="w-full">
-          <UFileUpload v-model="rechnung" multiple :dropzone="true" :label="$t('ausgefüllte Rechnung(en)')" class="w-full"/>
+          <UFileUpload
+            v-model="rechnung"
+            multiple
+            :dropzone="true"
+            :label="$t('ausgefüllte Rechnung(en)')"
+            class="w-full"
+          />
           <div
             v-if="rechnung.length"
-            class="mt-2 space-y-1 text-sm text-gray-500">
-            <p v-for="file in rechnung" :key="`${file.name}-${file.size}`">📄 {{ file.name }}</p>
+            class="mt-2 space-y-1 text-sm text-gray-500"
+          >
+            <p v-for="file in rechnung" :key="`${file.name}-${file.size}`">
+              📄 {{ file.name }}
+            </p>
           </div>
         </div>
 
         <div class="w-full">
-          <UFileUpload v-model="bestaetigung" multiple :dropzone="true" :label="$t('Teilnahmebestätigung(en)')" class="w-full"/>
+          <UFileUpload
+            v-model="bestaetigung"
+            multiple
+            :dropzone="true"
+            :label="$t('Teilnahmebestätigung(en)')"
+            class="w-full"
+          />
 
           <div v-if="bestaetigung.length" class="mt-2 space-y-1 text-sm text-gray-500">
-            <p v-for="file in bestaetigung" :key="`${file.name}-${file.size}`">📄 {{ file.name }}</p>
+            <p v-for="file in bestaetigung" :key="`${file.name}-${file.size}`">
+              📄 {{ file.name }}
+            </p>
           </div>
         </div>
 
         <div class="w-full">
-          <UTextarea v-model="kommentar" :rows="9" class="w-full" :placeholder="$t('weitere Infos für den AStA')"/>
+          <UTextarea
+            v-model="kommentar"
+            :rows="9"
+            class="w-full"
+            :placeholder="$t('weitere Infos für den AStA')"
+          />
         </div>
-        <div class="cf-turnstile" :data-sitekey="config.public.turnstileSiteKey"/>
+        <div class="cf-turnstile" :data-sitekey="config.public.turnstileSiteKey" />
 
         <div class="md:col-span-5 flex md:flex-row justify-center gap-4 mt-4">
-          <UButton type="reset" class="bg-gray-500 hover:bg-gray-700 active:bg-gray-500" :label="$t('Eingaben löschen')" @click="resetForm"/>
-          <UButton type="submit"class="bg-red-500 hover:bg-red-900 active:bg-red-500" :label="$t('Absenden')"/>
+          <UButton
+            type="reset"
+            class="bg-gray-500 hover:bg-gray-700 active:bg-gray-500"
+            :label="$t('Eingaben löschen')"
+            @click="resetForm"
+          />
+          <UButton type="submit" class="bg-red-500 hover:bg-red-900 active:bg-red-500" :label="$t('Absenden')" />
         </div>
       </div>
 
-      <div v-if="serverMessage && !wasSent" class="p-4 mb-8 text-center bg-red-900 text-red-300">{{ serverMessage }}</div>
+      <div v-if="serverMessage && !wasSent" class="p-4 mb-8 text-center bg-red-900 text-red-300">
+        {{ serverMessage }}
+      </div>
 
       <div v-if="isSubmitting" class="text-center mb-10">
         <Icon name="svg-spinners:3-dots-scale" size="48" />

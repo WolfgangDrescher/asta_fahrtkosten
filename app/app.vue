@@ -52,15 +52,16 @@ const { data: wie } = await useDoc('wie')
       <img src="/assets/logo_mh.png" class="max-h-15 md:max-h-25" alt="Logo HfM Freiburg">
     </div>
 
-  <UDropdownMenu :items="items">
-    <UButton icon="i-lucide-languages" variant="ghost" color="neutral"/>
-  </UDropdownMenu>
+    <UDropdownMenu :items="items">
+      <UButton icon="i-lucide-languages" variant="ghost" color="neutral" />
+    </UDropdownMenu>
   </div>
 
-
-    <div class="justify-items-center p-5">
-      <h1 class="text-3xl md:text-5xl text-red-600 font-bold">{{ $t('Fahrtkostenzuschuss') }}</h1>
-    </div>
+  <div class="justify-items-center p-5">
+    <h1 class="text-3xl md:text-5xl text-red-600 font-bold">
+      {{ $t('Fahrtkostenzuschuss') }}
+    </h1>
+  </div>
 
   <UContainer class="justify-center">
     <div class="flex flex-col items-center gap-4 p-3">
@@ -68,47 +69,62 @@ const { data: wie } = await useDoc('wie')
         <img src="/assets/picture_ice.png" alt="ICE-Zug" class="max-h-150">
       </div>
       <div class="p-10">
-        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">{{ $t('Antrag auf einen Fahrtkostenzuschuss') }}</h2>
+        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">
+          {{ $t('Antrag auf einen Fahrtkostenzuschuss') }}
+        </h2>
         <article>
           <ContentRenderer v-if="general" :value="general" />
-        </article>      
+        </article>
       </div>
       <div>
         <a href="fahrtkostenantrag.pdf" download>
-          <UButton class="bg-red-500 hover:bg-red-800" size="xl" :label="$t('Antrag herunterladen (pdf)')" icon="i-lucide-download" />
+          <UButton
+            class="bg-red-500 hover:bg-red-800"
+            size="xl"
+            :label="$t('Antrag herunterladen (pdf)')"
+            icon="i-lucide-download"
+          />
         </a>
       </div>
       <div class="p-10">
         <article>
           <ContentRenderer v-if="responsibility" :value="responsibility" />
-        </article>  
+        </article>
       </div>
 
       <ApplicationForm />
 
       <div class="p-10">
-        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">{{ $t('Was wird bezuschusst?') }}</h2>
+        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">
+          {{ $t('Was wird bezuschusst?') }}
+        </h2>
         <article>
           <ContentRenderer v-if="waswird" :value="waswird" />
-        </article>  
+        </article>
       </div>
-      
+
       <div class="p-10">
-        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">{{ $t('Höhe des Zuschusses') }}</h2>
+        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">
+          {{ $t('Höhe des Zuschusses') }}
+        </h2>
         <article>
           <ContentRenderer v-if="hohe" :value="hohe" />
         </article>
       </div>
-    
+
       <div class="p-10">
-        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">{{ $t('Wie funktioniert die Antragsstellung?') }}</h2>
-      <article>
-        <ContentRenderer v-if="wie" :value="wie" />
-      </article>
+        <h2 class="text-2xl md:text-4xl text-red-600 font-bold">
+          {{ $t('Wie funktioniert die Antragsstellung?') }}
+        </h2>
+        <article>
+          <ContentRenderer v-if="wie" :value="wie" />
+        </article>
       </div>
     </div>
   </UContainer>
   <footer class="border-t border-gray-200 py-6">
-    <p class="text-center text-sm text-gray-500">© {{ currentYear }}, Florian Moldaschl. Alle Rechte vorbehalten.</p>
+    <p class="text-center text-sm text-gray-500">
+      © {{ currentYear }}, Florian Moldaschl. Alle Rechte vorbehalten.
+    </p>
   </footer>
 </template>
