@@ -84,7 +84,7 @@ const { data: wie } = await useDoc('wie')
         </article>  
       </div>
 
-      <AppForm />
+      <ApplicationForm />
 
       <div class="p-10">
         <h2 class="text-2xl md:text-4xl text-red-600 font-bold">{{ $t('Was wird bezuschusst?') }}</h2>
