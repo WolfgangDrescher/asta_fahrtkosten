@@ -18,6 +18,11 @@ const MHmail = ref('')
 const firstName = ref('')
 const lastName = ref('')
 
+const errorMessages = {
+  413: 'Die Dateien sind zusammen zu groß (maximal 18 MB).',
+  415: 'Es sind nur PDF-, JPG- und PNG-Dateien erlaubt.'
+}
+
 const isSubmitting = ref(false)
 const wasSent = ref(false)
 const serverMessage = ref('')
@@ -27,6 +32,18 @@ const submitForm = async () => {
 
   if (!antrag.value || !rechnung.value.length || !bestaetigung.value.length) {
     serverMessage.value = t('Bitte fülle alle Pflichtfelder aus und lade alle Dokumente hoch.')
+    return
+  }
+
+  const allFiles = [antrag.value, ...rechnung.value, ...bestaetigung.value]
+
+  if (!allFiles.every(file => isAllowedFile(file.name))) {
+    serverMessage.value = t('Es sind nur PDF-, JPG- und PNG-Dateien erlaubt.')
+    return
+  }
+
+  if (allFiles.reduce((sum, file) => sum + file.size, 0) > MAX_TOTAL_SIZE_BYTES) {
+    serverMessage.value = t('Die Dateien sind zusammen zu groß (maximal 18 MB).')
     return
   }
 
@@ -74,7 +91,7 @@ const submitForm = async () => {
     console.error(error)
 
     wasSent.value = false
-    serverMessage.value = t('Beim Senden ist ein Fehler aufgetreten.')
+    serverMessage.value = t(errorMessages[error.statusCode] ?? 'Beim Senden ist ein Fehler aufgetreten.')
 
     // A solved challenge is only accepted once
     altcha.value?.reset()
@@ -125,6 +142,7 @@ const resetForm = () => {
           <UFileUpload
             v-model="antrag"
             :dropzone="true"
+            :accept="ALLOWED_EXTENSIONS.join(',')"
             :label="$t('ausgefüllter Antrag')"
             class="w-full"
           />
@@ -138,6 +156,7 @@ const resetForm = () => {
             v-model="rechnung"
             multiple
             :dropzone="true"
+            :accept="ALLOWED_EXTENSIONS.join(',')"
             :label="$t('ausgefüllte Rechnung(en)')"
             class="w-full"
           />
@@ -156,6 +175,7 @@ const resetForm = () => {
             v-model="bestaetigung"
             multiple
             :dropzone="true"
+            :accept="ALLOWED_EXTENSIONS.join(',')"
             :label="$t('Teilnahmebestätigung(en)')"
             class="w-full"
           />

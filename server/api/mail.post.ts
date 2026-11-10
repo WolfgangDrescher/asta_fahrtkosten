@@ -1,10 +1,34 @@
-import { extname } from 'node:path'
 import nodemailer from 'nodemailer'
 
-// Gmail allows 25 MB per mail, base64 encoding adds about 33 %
-const MAX_TOTAL_SIZE_BYTES = 18 * 1024 * 1024
+// Letters that Unicode decomposition does not reduce to ASCII, and the German
+// umlauts the way they are usually written without diacritics
+const TRANSLITERATIONS: Record<string, string> = {
+  'ä': 'ae', 'ö': 'oe', 'ü': 'ue', 'Ä': 'Ae', 'Ö': 'Oe', 'Ü': 'Ue', 'ß': 'ss',
+  'æ': 'ae', 'Æ': 'Ae', 'œ': 'oe', 'Œ': 'Oe', 'ø': 'o', 'Ø': 'O', 'ł': 'l', 'Ł': 'L',
+  'đ': 'd', 'Đ': 'D', 'þ': 'th', 'Þ': 'Th', 'ı': 'i'
+}
+
+// Makes a name safe for the filename of an attachment: ASCII letters, digits,
+// dots and hyphens only, everything else becomes an underscore
+const toFilenamePart = (value: string) =>
+  value
+    .replace(/[äöüÄÖÜßæÆœŒøØłŁđĐþÞı]/g, letter => TRANSLITERATIONS[letter])
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9.-]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+
+// Multipart boundaries and text fields need a little room on top of the files
+const MAX_REQUEST_SIZE_BYTES = MAX_TOTAL_SIZE_BYTES + 1024 * 1024
 
 export default defineEventHandler(async (event) => {
+  if (Number(getRequestHeader(event, 'content-length')) > MAX_REQUEST_SIZE_BYTES) {
+    throw createError({
+      statusCode: 413,
+      statusMessage: 'Files too large.'
+    })
+  }
+
   const form = await readMultipartFormData(event)
 
   if (!form) {
@@ -80,26 +104,36 @@ export default defineEventHandler(async (event) => {
       } else if (file.name === 'rechnung') {
         rechnungIndex++
         typ = totalRechnungen > 1
-          ? `Rechnung (${rechnungIndex}/${totalRechnungen})`
+          ? `Rechnung (${rechnungIndex} von ${totalRechnungen})`
           : 'Rechnung'
       } else if (file.name === 'bestaetigung') {
         bestaetigungIndex++
         typ = totalBestaetigungen > 1
-          ? `Teilnahmebestaetigung (${bestaetigungIndex}/${totalBestaetigungen})`
+          ? `Teilnahmebestaetigung (${bestaetigungIndex} von ${totalBestaetigungen})`
           : 'Teilnahmebestaetigung'
       } else {
         typ = file.name
       }
 
+      const extension = getExtension(file.filename ?? '')
+
       return {
-        filename: `${typ}_${lastName}_${firstName}${extname(file.filename ?? '')}`,
+        filename: `${typ}_${toFilenamePart(lastName)}_${toFilenamePart(firstName)}${extension}`,
         content: file.data,
-        contentType: file.type
+        contentType: CONTENT_TYPES[extension]
       }
     })
 
-  const totalSize = [antrag, ...rechnungen, ...bestaetigungen]
-    .reduce((sum, file) => sum + file.data.length, 0)
+  const allFiles = [antrag, ...rechnungen, ...bestaetigungen]
+
+  if (!allFiles.every(file => isAllowedFile(file.filename ?? ''))) {
+    throw createError({
+      statusCode: 415,
+      statusMessage: 'Only PDF, JPG and PNG files are allowed.'
+    })
+  }
+
+  const totalSize = allFiles.reduce((sum, file) => sum + file.data.length, 0)
 
   if (totalSize > MAX_TOTAL_SIZE_BYTES) {
     throw createError({
