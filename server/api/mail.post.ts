@@ -25,7 +25,8 @@ export default defineEventHandler(async (event) => {
   if (Number(getRequestHeader(event, 'content-length')) > MAX_REQUEST_SIZE_BYTES) {
     throw createError({
       statusCode: 413,
-      statusMessage: 'Files too large.'
+      statusMessage: 'Files too large.',
+      data: { code: 'fileSize' }
     })
   }
 
@@ -43,7 +44,8 @@ export default defineEventHandler(async (event) => {
   if (!await verifyAltcha(altchaPayload, event)) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'CAPTCHA verification failed.'
+      statusMessage: 'CAPTCHA verification failed.',
+      data: { code: 'captcha' }
     })
   }
 
@@ -54,7 +56,8 @@ export default defineEventHandler(async (event) => {
   if (!firstName || !lastName) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Name First and Last are required.'
+      statusMessage: 'Name First and Last are required.',
+      data: { code: 'name' }
     })
   }
 
@@ -73,7 +76,8 @@ export default defineEventHandler(async (event) => {
   if (!applicationFile || invoiceFiles.length === 0 || confirmationFiles.length === 0) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'All documents are required.'
+      statusMessage: 'All documents are required.',
+      data: { code: 'documents' }
     })
   }
 
@@ -82,7 +86,8 @@ export default defineEventHandler(async (event) => {
   if (!isUniversityEmail(email)) {
     throw createError({
       statusCode: 400,
-      statusMessage: `An @${UNIVERSITY_MAIL_DOMAIN} address is required.`
+      statusMessage: `An @${UNIVERSITY_MAIL_DOMAIN} address is required.`,
+      data: { code: 'email' }
     })
   }
 
@@ -129,7 +134,8 @@ export default defineEventHandler(async (event) => {
   if (!allFiles.every(file => isAllowedFile(file.filename ?? ''))) {
     throw createError({
       statusCode: 415,
-      statusMessage: 'Only PDF, JPG and PNG files are allowed.'
+      statusMessage: 'Only PDF, JPG and PNG files are allowed.',
+      data: { code: 'fileType' }
     })
   }
 
@@ -138,7 +144,8 @@ export default defineEventHandler(async (event) => {
   if (totalSize > MAX_TOTAL_SIZE_BYTES) {
     throw createError({
       statusCode: 413,
-      statusMessage: 'Files too large.'
+      statusMessage: 'Files too large.',
+      data: { code: 'fileSize' }
     })
   }
 

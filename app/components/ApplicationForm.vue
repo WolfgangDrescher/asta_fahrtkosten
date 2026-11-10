@@ -18,9 +18,14 @@ const email = ref('')
 const firstName = ref('')
 const lastName = ref('')
 
+// The server validates the application and names the reason it refuses one
 const errorMessages = {
-  413: 'Die Dateien sind zusammen zu groß (maximal 18 MB).',
-  415: 'Es sind nur PDF-, JPG- und PNG-Dateien erlaubt.'
+  captcha: 'Bitte bestätige zuerst das CAPTCHA.',
+  name: 'Bitte fülle alle Pflichtfelder aus und lade alle Dokumente hoch.',
+  documents: 'Bitte fülle alle Pflichtfelder aus und lade alle Dokumente hoch.',
+  email: 'Bitte gib deine MH-Mail-Adresse an ({domain}).',
+  fileType: 'Es sind nur PDF-, JPG- und PNG-Dateien erlaubt.',
+  fileSize: 'Die Dateien sind zusammen zu groß (maximal 18 MB).'
 }
 
 const isSubmitting = ref(false)
@@ -32,11 +37,6 @@ const submitForm = async () => {
 
   if (!applicationFile.value || !invoiceFiles.value.length || !confirmationFiles.value.length) {
     serverMessage.value = t('Bitte fülle alle Pflichtfelder aus und lade alle Dokumente hoch.')
-    return
-  }
-
-  if (!isUniversityEmail(email.value)) {
-    serverMessage.value = t('Bitte gib deine MH-Mail-Adresse an ({domain}).', { domain: `@${UNIVERSITY_MAIL_DOMAIN}` })
     return
   }
 
@@ -96,10 +96,13 @@ const submitForm = async () => {
     console.error(error)
 
     wasSent.value = false
-    serverMessage.value = t(errorMessages[error.statusCode] ?? 'Beim Senden ist ein Fehler aufgetreten.')
+    const code = error.data?.data?.code
+    serverMessage.value = t(errorMessages[code] ?? 'Beim Senden ist ein Fehler aufgetreten.', { domain: `@${UNIVERSITY_MAIL_DOMAIN}` })
 
-    // A solved challenge is only accepted once
+    // A solved challenge is only accepted once, so a new one is solved for the
+    // next attempt without bothering the user again
     altcha.value?.reset()
+    altcha.value?.verify()
   } finally {
     isSubmitting.value = false
   }
@@ -131,16 +134,16 @@ const resetForm = () => {
       :title="$t('Antrag erfolgreich gesendet!')"
     />
 
-    <form v-else class="flex flex-col gap-8" @submit.prevent="submitForm">
+    <form v-else class="flex flex-col gap-8" novalidate @submit.prevent="submitForm">
       <div class="flex flex-col gap-4">
         <UFormField :label="$t('Vorname')" required>
-          <UInput v-model="firstName" required class="w-full" />
+          <UInput v-model="firstName" class="w-full" />
         </UFormField>
         <UFormField :label="$t('Nachname')" required>
-          <UInput v-model="lastName" required class="w-full" />
+          <UInput v-model="lastName" class="w-full" />
         </UFormField>
         <UFormField :label="$t('MH-Mail-Adresse')" required>
-          <UInput v-model="email" type="email" required class="w-full" />
+          <UInput v-model="email" type="email" class="w-full" />
         </UFormField>
       </div>
 
