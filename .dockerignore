@@ -1,6 +1,5 @@
 # Generated files, local build output and server settings stay out of the context.
 .git
-.github
 node_modules
 .nuxt
 .output
