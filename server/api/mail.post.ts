@@ -53,7 +53,14 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const MHmail = form.find(field => field.name === 'MHmail')?.data.toString() ?? ''
+  const MHmail = form.find(field => field.name === 'MHmail')?.data.toString().trim() ?? ''
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(MHmail)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'A valid email address is required.'
+    })
+  }
 
   const kommentar = form.find(field => field.name === 'kommentar')?.data.toString() ?? ''
 

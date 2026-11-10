@@ -25,6 +25,11 @@ const serverMessage = ref('')
 const submitForm = async () => {
   if (isSubmitting.value) return
 
+  if (!antrag.value || !rechnung.value.length || !bestaetigung.value.length) {
+    serverMessage.value = t('Bitte fülle alle Pflichtfelder aus und lade alle Dokumente hoch.')
+    return
+  }
+
   isSubmitting.value = true
   serverMessage.value = ''
 
@@ -102,18 +107,18 @@ const resetForm = () => {
       </h3>
     </div>
 
-    <form
-      v-else
-      action="/"
-      method="post"
-      class="mb-6"
-      @submit.prevent="submitForm"
-    >
+    <form v-else class="mb-6" @submit.prevent="submitForm">
       <div class="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 w-full">
         <div class="flex flex-col gap-3 w-full">
-          <UInput v-model="firstName" class="w-full" :placeholder="$t('Vorname')" />
-          <UInput v-model="lastName" class="w-full" :placeholder="$t('Nachname')" />
-          <UInput v-model="MHmail" class="w-full" :placeholder="$t('MH-Mail-Adresse')" />
+          <UInput v-model="firstName" required class="w-full" :placeholder="$t('Vorname')" />
+          <UInput v-model="lastName" required class="w-full" :placeholder="$t('Nachname')" />
+          <UInput
+            v-model="MHmail"
+            type="email"
+            required
+            class="w-full"
+            :placeholder="$t('MH-Mail-Adresse')"
+          />
         </div>
 
         <div class="w-full">
