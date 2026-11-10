@@ -1,11 +1,11 @@
 <script setup>
-// The dropzone for one kind of document. Once something is uploaded, the file
-// names and their size replace the label, a button removes the files again,
-// and a file the server would refuse is reported right away.
+// The dropzone for one kind of document. A single file replaces the label with
+// its name and size, and a button removes it again. Several files are listed
+// inside the dropzone, each with its own remove button, so more can be added.
+// A file the server would refuse is reported right away.
 const files = defineModel({ default: null })
 
 const props = defineProps({
-  label: { type: String, required: true },
   multiple: { type: Boolean, default: false }
 })
 
@@ -17,6 +17,7 @@ const fileList = computed(() => {
 })
 
 const hasFiles = computed(() => fileList.value.length > 0)
+const showsFileInLabel = computed(() => hasFiles.value && !props.multiple)
 const names = computed(() => fileList.value.map(file => file.name).join(', '))
 const size = computed(() => formatBytes(fileList.value.reduce((sum, file) => sum + file.size, 0)))
 
@@ -38,16 +39,18 @@ const clear = () => {
         v-model="files"
         :multiple="multiple"
         :accept="ALLOWED_EXTENSIONS.join(',')"
-        :icon="hasFiles ? 'i-lucide-file' : undefined"
-        :label="hasFiles ? names : label"
-        :description="hasFiles ? size : $t('PDF, JPG oder PNG')"
-        :preview="false"
+        :icon="showsFileInLabel ? 'i-lucide-file' : undefined"
+        :label="showsFileInLabel ? names : $t('Datei hierher ziehen oder klicken')"
+        :description="showsFileInLabel ? size : $t('PDF, JPG oder PNG')"
+        :preview="multiple"
+        layout="list"
+        position="inside"
         size="sm"
         :ui="{ base: 'min-h-24' }"
         class="w-full"
       />
       <UButton
-        v-if="hasFiles"
+        v-if="showsFileInLabel"
         icon="i-lucide-x"
         color="neutral"
         variant="ghost"

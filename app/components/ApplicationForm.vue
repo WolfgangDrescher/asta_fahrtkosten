@@ -117,65 +117,76 @@ const resetForm = () => {
 </script>
 
 <template>
-  <div>
-    <div v-if="wasSent">
-      <h3 class="text-2xl p-8 font-bold mb-4 text-red-600">
-        {{ $t('Antrag erfolgreich gesendet!') }}
-      </h3>
-    </div>
+  <UCard class="w-full max-w-2xl">
+    <UAlert
+      v-if="wasSent"
+      color="success"
+      variant="subtle"
+      icon="i-lucide-circle-check"
+      :title="$t('Antrag erfolgreich gesendet!')"
+    />
 
-    <form v-else class="mb-6" @submit.prevent="submitForm">
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 w-full">
-        <div class="flex flex-col gap-3 w-full">
-          <UInput v-model="firstName" required class="w-full" :placeholder="$t('Vorname')" />
-          <UInput v-model="lastName" required class="w-full" :placeholder="$t('Nachname')" />
-          <UInput
-            v-model="email"
-            type="email"
-            required
-            class="w-full"
-            :placeholder="$t('MH-Mail-Adresse')"
-          />
-        </div>
+    <form v-else class="flex flex-col gap-8" @submit.prevent="submitForm">
+      <div class="flex flex-col gap-4">
+        <UFormField :label="$t('Vorname')" required>
+          <UInput v-model="firstName" required class="w-full" />
+        </UFormField>
+        <UFormField :label="$t('Nachname')" required>
+          <UInput v-model="lastName" required class="w-full" />
+        </UFormField>
+        <UFormField :label="$t('MH-Mail-Adresse')" required>
+          <UInput v-model="email" type="email" required class="w-full" />
+        </UFormField>
+      </div>
 
-        <DocumentField v-model="applicationFile" :label="$t('ausgefüllter Antrag')" />
-        <DocumentField v-model="invoiceFiles" multiple :label="$t('ausgefüllte Rechnung(en)')" />
-        <DocumentField v-model="confirmationFiles" multiple :label="$t('Teilnahmebestätigung(en)')" />
+      <div class="flex flex-col gap-4">
+        <UFormField :label="$t('ausgefüllter Antrag')" required>
+          <DocumentField v-model="applicationFile" />
+        </UFormField>
+        <UFormField :label="$t('ausgefüllte Rechnung(en)')" required>
+          <DocumentField v-model="invoiceFiles" multiple />
+        </UFormField>
+        <UFormField :label="$t('Teilnahmebestätigung(en)')" required>
+          <DocumentField v-model="confirmationFiles" multiple />
+        </UFormField>
+      </div>
 
-        <div class="w-full">
-          <UTextarea
-            v-model="comment"
-            :rows="9"
-            class="w-full"
-            :placeholder="$t('weitere Infos für den AStA')"
-          />
-        </div>
-        <altcha-widget
-          ref="altcha"
-          :challenge="altchaChallengeUrl"
-          :language="altchaLanguages[locale]"
-          @statechange="altchaPayload = $event.detail.payload ?? ''"
+      <UFormField :label="$t('weitere Infos für den AStA')">
+        <UTextarea v-model="comment" :rows="5" class="w-full" />
+      </UFormField>
+
+      <altcha-widget
+        ref="altcha"
+        class="w-full sm:w-80"
+        :challenge="altchaChallengeUrl"
+        :language="altchaLanguages[locale]"
+        @statechange="altchaPayload = $event.detail.payload ?? ''"
+      />
+
+      <div class="flex gap-4">
+        <UButton
+          type="submit"
+          class="bg-red-500 hover:bg-red-900 active:bg-red-500"
+          :label="isSubmitting ? $t('Antrag wird gesendet') : $t('Absenden')"
+          :loading="isSubmitting"
         />
-
-        <div class="md:col-span-5 flex md:flex-row justify-center gap-4 mt-4">
-          <UButton
-            type="reset"
-            class="bg-gray-500 hover:bg-gray-700 active:bg-gray-500"
-            :label="$t('Eingaben löschen')"
-            @click="resetForm"
-          />
-          <UButton type="submit" class="bg-red-500 hover:bg-red-900 active:bg-red-500" :label="$t('Absenden')" />
-        </div>
+        <UButton
+          type="reset"
+          color="neutral"
+          variant="soft"
+          :label="$t('Eingaben löschen')"
+          :disabled="isSubmitting"
+          @click="resetForm"
+        />
       </div>
 
-      <div v-if="serverMessage && !wasSent" class="p-4 mb-8 text-center bg-red-900 text-red-300">
-        {{ serverMessage }}
-      </div>
-
-      <div v-if="isSubmitting" class="text-center mb-10">
-        <UIcon name="i-lucide-loader-circle" class="size-12 animate-spin" />
-        <p>{{ $t('Antrag wird gesendet') }}</p>
-      </div>
+      <UAlert
+        v-if="serverMessage"
+        color="error"
+        variant="subtle"
+        icon="i-lucide-circle-alert"
+        :title="serverMessage"
+      />
     </form>
-  </div>
+  </UCard>
 </template>
