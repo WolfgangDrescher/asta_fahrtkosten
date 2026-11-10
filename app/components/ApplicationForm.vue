@@ -9,12 +9,12 @@ const altchaLanguages = { de: 'de', en: 'en', fr: 'fr-fr', es: 'es-es', it: 'it'
 const altcha = ref(null)
 const altchaPayload = ref('')
 
-const antrag = ref(null)
-const rechnung = ref([])
-const bestaetigung = ref([])
+const applicationFile = ref(null)
+const invoiceFiles = ref([])
+const confirmationFiles = ref([])
 
-const kommentar = ref('')
-const MHmail = ref('')
+const comment = ref('')
+const email = ref('')
 const firstName = ref('')
 const lastName = ref('')
 
@@ -30,12 +30,12 @@ const serverMessage = ref('')
 const submitForm = async () => {
   if (isSubmitting.value) return
 
-  if (!antrag.value || !rechnung.value.length || !bestaetigung.value.length) {
+  if (!applicationFile.value || !invoiceFiles.value.length || !confirmationFiles.value.length) {
     serverMessage.value = t('Bitte fülle alle Pflichtfelder aus und lade alle Dokumente hoch.')
     return
   }
 
-  const allFiles = [antrag.value, ...rechnung.value, ...bestaetigung.value]
+  const allFiles = [applicationFile.value, ...invoiceFiles.value, ...confirmationFiles.value]
 
   if (!allFiles.every(file => isAllowedFile(file.name))) {
     serverMessage.value = t('Es sind nur PDF-, JPG- und PNG-Dateien erlaubt.')
@@ -53,21 +53,21 @@ const submitForm = async () => {
   try {
     const formData = new FormData()
 
-    if (antrag.value) {
-      formData.append('antrag', antrag.value)
+    if (applicationFile.value) {
+      formData.append('applicationFile', applicationFile.value)
     }
 
-    for (const file of rechnung.value) {
-      formData.append('rechnung', file)
+    for (const file of invoiceFiles.value) {
+      formData.append('invoiceFiles', file)
     }
 
-    for (const file of bestaetigung.value) {
-      formData.append('bestaetigung', file)
+    for (const file of confirmationFiles.value) {
+      formData.append('confirmationFiles', file)
     }
 
-    formData.append('kommentar', kommentar.value)
+    formData.append('comment', comment.value)
 
-    formData.append('MHmail', MHmail.value)
+    formData.append('email', email.value)
 
     formData.append('firstName', firstName.value)
 
@@ -101,11 +101,11 @@ const submitForm = async () => {
 }
 
 const resetForm = () => {
-  antrag.value = null
-  rechnung.value = []
-  bestaetigung.value = []
-  kommentar.value = ''
-  MHmail.value = ''
+  applicationFile.value = null
+  invoiceFiles.value = []
+  confirmationFiles.value = []
+  comment.value = ''
+  email.value = ''
   firstName.value = ''
   lastName.value = ''
 
@@ -130,7 +130,7 @@ const resetForm = () => {
           <UInput v-model="firstName" required class="w-full" :placeholder="$t('Vorname')" />
           <UInput v-model="lastName" required class="w-full" :placeholder="$t('Nachname')" />
           <UInput
-            v-model="MHmail"
+            v-model="email"
             type="email"
             required
             class="w-full"
@@ -140,20 +140,20 @@ const resetForm = () => {
 
         <div class="w-full">
           <UFileUpload
-            v-model="antrag"
+            v-model="applicationFile"
             :dropzone="true"
             :accept="ALLOWED_EXTENSIONS.join(',')"
             :label="$t('ausgefüllter Antrag')"
             class="w-full"
           />
-          <p v-if="antrag" class="mt-2 text-sm text-gray-500">
-            📄 {{ antrag.name }}
+          <p v-if="applicationFile" class="mt-2 text-sm text-gray-500">
+            📄 {{ applicationFile.name }}
           </p>
         </div>
 
         <div class="w-full">
           <UFileUpload
-            v-model="rechnung"
+            v-model="invoiceFiles"
             multiple
             :dropzone="true"
             :accept="ALLOWED_EXTENSIONS.join(',')"
@@ -161,10 +161,10 @@ const resetForm = () => {
             class="w-full"
           />
           <div
-            v-if="rechnung.length"
+            v-if="invoiceFiles.length"
             class="mt-2 space-y-1 text-sm text-gray-500"
           >
-            <p v-for="file in rechnung" :key="`${file.name}-${file.size}`">
+            <p v-for="file in invoiceFiles" :key="`${file.name}-${file.size}`">
               📄 {{ file.name }}
             </p>
           </div>
@@ -172,7 +172,7 @@ const resetForm = () => {
 
         <div class="w-full">
           <UFileUpload
-            v-model="bestaetigung"
+            v-model="confirmationFiles"
             multiple
             :dropzone="true"
             :accept="ALLOWED_EXTENSIONS.join(',')"
@@ -180,8 +180,8 @@ const resetForm = () => {
             class="w-full"
           />
 
-          <div v-if="bestaetigung.length" class="mt-2 space-y-1 text-sm text-gray-500">
-            <p v-for="file in bestaetigung" :key="`${file.name}-${file.size}`">
+          <div v-if="confirmationFiles.length" class="mt-2 space-y-1 text-sm text-gray-500">
+            <p v-for="file in confirmationFiles" :key="`${file.name}-${file.size}`">
               📄 {{ file.name }}
             </p>
           </div>
@@ -189,7 +189,7 @@ const resetForm = () => {
 
         <div class="w-full">
           <UTextarea
-            v-model="kommentar"
+            v-model="comment"
             :rows="9"
             class="w-full"
             :placeholder="$t('weitere Infos für den AStA')"

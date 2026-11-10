@@ -21,10 +21,10 @@ useHead({
   ]
 })
 
-const items = computed(() =>
-  locales.value.map(l => ({
-    label: l.code.toUpperCase(),
-    onSelect: () => setLocale(l.code)
+const localeItems = computed(() =>
+  locales.value.map(loc => ({
+    label: loc.code.toUpperCase(),
+    onSelect: () => setLocale(loc.code)
   }))
 )
 function useDoc(name) {
@@ -40,11 +40,11 @@ function useDoc(name) {
   )
 }
 
-const { data: general } = await useDoc('general')
+const { data: intro } = await useDoc('intro')
 const { data: responsibility } = await useDoc('responsibility')
-const { data: waswird } = await useDoc('waswird')
-const { data: hohe } = await useDoc('hohe')
-const { data: wie } = await useDoc('wie')
+const { data: eligibleCosts } = await useDoc('eligible-costs')
+const { data: amount } = await useDoc('amount')
+const { data: applicationProcess } = await useDoc('application-process')
 </script>
 
 <template>
@@ -53,7 +53,7 @@ const { data: wie } = await useDoc('wie')
       <img src="/assets/logo_mh.png" class="max-h-15 md:max-h-25" alt="Logo HfM Freiburg">
     </div>
 
-    <UDropdownMenu :items="items">
+    <UDropdownMenu :items="localeItems">
       <UButton icon="i-lucide-languages" variant="ghost" color="neutral" />
     </UDropdownMenu>
   </div>
@@ -74,7 +74,7 @@ const { data: wie } = await useDoc('wie')
           {{ $t('Antrag auf einen Fahrtkostenzuschuss') }}
         </h2>
         <article>
-          <ContentRenderer v-if="general" :value="general" />
+          <ContentRenderer v-if="intro" :value="intro" />
         </article>
       </div>
       <div>
@@ -100,7 +100,7 @@ const { data: wie } = await useDoc('wie')
           {{ $t('Was wird bezuschusst?') }}
         </h2>
         <article>
-          <ContentRenderer v-if="waswird" :value="waswird" />
+          <ContentRenderer v-if="eligibleCosts" :value="eligibleCosts" />
         </article>
       </div>
 
@@ -109,7 +109,7 @@ const { data: wie } = await useDoc('wie')
           {{ $t('Höhe des Zuschusses') }}
         </h2>
         <article>
-          <ContentRenderer v-if="hohe" :value="hohe" />
+          <ContentRenderer v-if="amount" :value="amount" />
         </article>
       </div>
 
@@ -118,7 +118,7 @@ const { data: wie } = await useDoc('wie')
           {{ $t('Wie funktioniert die Antragsstellung?') }}
         </h2>
         <article>
-          <ContentRenderer v-if="wie" :value="wie" />
+          <ContentRenderer v-if="applicationProcess" :value="applicationProcess" />
         </article>
       </div>
     </div>

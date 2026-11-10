@@ -58,73 +58,73 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const antrag = form.find(
-    field => field.name === 'antrag' && field.filename
+  const applicationFile = form.find(
+    field => field.name === 'applicationFile' && field.filename
   )
 
-  const rechnungen = form.filter(
-    field => field.name === 'rechnung' && field.filename
+  const invoiceFiles = form.filter(
+    field => field.name === 'invoiceFiles' && field.filename
   )
 
-  const bestaetigungen = form.filter(
-    field => field.name === 'bestaetigung' && field.filename
+  const confirmationFiles = form.filter(
+    field => field.name === 'confirmationFiles' && field.filename
   )
 
-  if (!antrag || rechnungen.length === 0 || bestaetigungen.length === 0) {
+  if (!applicationFile || invoiceFiles.length === 0 || confirmationFiles.length === 0) {
     throw createError({
       statusCode: 400,
       statusMessage: 'All documents are required.'
     })
   }
 
-  const MHmail = form.find(field => field.name === 'MHmail')?.data.toString().trim() ?? ''
+  const email = form.find(field => field.name === 'email')?.data.toString().trim() ?? ''
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(MHmail)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw createError({
       statusCode: 400,
       statusMessage: 'A valid email address is required.'
     })
   }
 
-  const kommentar = form.find(field => field.name === 'kommentar')?.data.toString() ?? ''
+  const comment = form.find(field => field.name === 'comment')?.data.toString() ?? ''
 
-  const totalRechnungen = rechnungen.length
-  const totalBestaetigungen = bestaetigungen.length
+  const totalInvoices = invoiceFiles.length
+  const totalConfirmations = confirmationFiles.length
 
-  let rechnungIndex = 0
-  let bestaetigungIndex = 0
+  let invoiceIndex = 0
+  let confirmationIndex = 0
 
   const attachments = form
     .filter(field => field.filename)
     .map(file => {
-      let typ
+      let label
 
-      if (file.name === 'antrag') {
-        typ = 'Antrag'
-      } else if (file.name === 'rechnung') {
-        rechnungIndex++
-        typ = totalRechnungen > 1
-          ? `Rechnung (${rechnungIndex} von ${totalRechnungen})`
+      if (file.name === 'applicationFile') {
+        label = 'Antrag'
+      } else if (file.name === 'invoiceFiles') {
+        invoiceIndex++
+        label = totalInvoices > 1
+          ? `Rechnung (${invoiceIndex} von ${totalInvoices})`
           : 'Rechnung'
-      } else if (file.name === 'bestaetigung') {
-        bestaetigungIndex++
-        typ = totalBestaetigungen > 1
-          ? `Teilnahmebestaetigung (${bestaetigungIndex} von ${totalBestaetigungen})`
+      } else if (file.name === 'confirmationFiles') {
+        confirmationIndex++
+        label = totalConfirmations > 1
+          ? `Teilnahmebestaetigung (${confirmationIndex} von ${totalConfirmations})`
           : 'Teilnahmebestaetigung'
       } else {
-        typ = file.name
+        label = file.name
       }
 
       const extension = getExtension(file.filename ?? '')
 
       return {
-        filename: `${typ}_${toFilenamePart(lastName)}_${toFilenamePart(firstName)}${extension}`,
+        filename: `${label}_${toFilenamePart(lastName)}_${toFilenamePart(firstName)}${extension}`,
         content: file.data,
         contentType: CONTENT_TYPES[extension]
       }
     })
 
-  const allFiles = [antrag, ...rechnungen, ...bestaetigungen]
+  const allFiles = [applicationFile, ...invoiceFiles, ...confirmationFiles]
 
   if (!allFiles.every(file => isAllowedFile(file.filename ?? ''))) {
     throw createError({
@@ -159,9 +159,9 @@ export default defineEventHandler(async (event) => {
         'Ein neuer Antrag auf Fahrtkostenzuschuss wurde eingereicht.',
         '',
         `Name: ${firstName} ${lastName}`,
-        `MH-Mail: ${MHmail}`,
+        `MH-Mail: ${email}`,
         '',
-        `Kommentar: ${kommentar}`
+        `Kommentar: ${comment}`
       ].join('\n'),
       attachments
     })
