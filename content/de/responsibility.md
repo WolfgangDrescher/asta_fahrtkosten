@@ -1,2 +1,2 @@
-Die Bezuschussung von Fahrtkosten zu Studienzwecken aus den Qualitätssicherungsmitteln (QSM) der HfM Freiburg ist ein Angebot, das nur aufrechterhalten werden kann, wenn alle Beteiligten ehrlich und verantwortungsbewusst damit umgehen. 
+Die Bezuschussung von Fahrtkosten zu Studienzwecken aus den Qualitätssicherungsmitteln (QSM) der HfM Freiburg ist ein Angebot, das nur aufrechterhalten werden kann, wenn alle Beteiligten ehrlich und verantwortungsbewusst damit umgehen.
 Sollte sich herausstellen, dass dieses Angebot missbraucht wird, so kann der AStA dieses Angebot zurücknehmen.

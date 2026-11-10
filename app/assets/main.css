@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/* Nested lists in the content are lettered, as in the original documents */
+article ol ol {
+  list-style-type: lower-alpha;
+}
