@@ -174,6 +174,8 @@ export default defineEventHandler(async (event) => {
     await transporter.sendMail({
       from: mail.from || mail.user,
       to: mail.to,
+      // The applicant gets a copy; the address was checked to be one of the university
+      cc: email,
       subject: 'Neuer Antrag auf Fahrtkostenzuschuss',
       text: [
         'Ein neuer Antrag auf Fahrtkostenzuschuss wurde eingereicht.',
