@@ -18,8 +18,7 @@ COPY . ./
 RUN npm run build
 
 
-# The runtime. Nuxt Content keeps its database in .data, everything else is
-# read only (see compose.yaml).
+# The runtime. Nuxt Content writes its database next to the server.
 FROM node:${NODE}-bookworm-slim
 WORKDIR /app
 COPY --from=build --chown=node:node /build/.output ./.output

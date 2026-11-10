@@ -12,7 +12,3 @@ services:
     env_file: .env
     ports:
       - '127.0.0.1:3000:3000'
-    read_only: true
-    tmpfs: [/tmp, /app/.data]
-    cap_drop: [ALL]
-    security_opt: ['no-new-privileges:true']
