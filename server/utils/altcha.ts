@@ -34,6 +34,8 @@ export const useAltcha = (event: H3Event) => {
 }
 
 export const verifyAltcha = async (payload: string, event: H3Event) => {
+  if (import.meta.dev) return true
+
   const { altchaHmacKey } = useRuntimeConfig(event)
   const { error } = await useAltcha(event).verify(payload, deriveKey, altchaHmacKey, undefined, store)
 

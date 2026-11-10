@@ -6,6 +6,8 @@ const { t, locale } = useI18n()
 const altchaChallengeUrl = `${useRuntimeConfig().app.baseURL}api/altcha`
 const altchaLanguages = { de: 'de', en: 'en', fr: 'fr-fr', es: 'es-es', it: 'it' }
 
+// No CAPTCHA in development
+const isCaptchaEnabled = !import.meta.dev
 const altcha = ref(null)
 const altchaPayload = ref('')
 
@@ -78,7 +80,7 @@ const submitForm = async () => {
 
     formData.append('lastName', lastName.value)
 
-    if (!altchaPayload.value) {
+    if (isCaptchaEnabled && !altchaPayload.value) {
       serverMessage.value = t('Bitte bestätige zuerst das CAPTCHA.')
       isSubmitting.value = false
       return
@@ -164,6 +166,7 @@ const resetForm = () => {
       </UFormField>
 
       <altcha-widget
+        v-if="isCaptchaEnabled"
         ref="altcha"
         class="w-full sm:w-80"
         :challenge="altchaChallengeUrl"
